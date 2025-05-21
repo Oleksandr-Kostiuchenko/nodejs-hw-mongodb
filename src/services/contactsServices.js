@@ -1,11 +1,35 @@
 //* Mongoose
 import { ContactsCollection } from '../db/models/contact.js';
 
-//* GET
-export const getContacts = async () => {
-  const contacts = await ContactsCollection.find();
+//* Utils
+import { calcPaginationData } from '../utils/calcPaginationData.js';
 
-  return contacts;
+//* GET
+export const getContacts = async (
+  page = 1,
+  perPage = 5,
+  sortBy = 'name',
+  sortOrder = 'asc',
+) => {
+  const skip = (page - 1) * perPage;
+  const limit = perPage;
+
+  const contactsQuery = ContactsCollection.find();
+  const contactsCount = await ContactsCollection.find()
+    .merge(contactsQuery)
+    .countDocuments();
+
+  const contacts = await contactsQuery
+    .skip(skip)
+    .limit(limit)
+    .sort({ [sortBy]: sortOrder })
+    .exec();
+  const paginationData = calcPaginationData(contactsCount, page, perPage);
+
+  return {
+    data: contacts,
+    ...paginationData,
+  };
 };
 export const getContactById = async (contactId) => {
   const contact = await ContactsCollection.findById(contactId);

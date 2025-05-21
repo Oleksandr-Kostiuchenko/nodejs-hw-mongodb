@@ -4,6 +4,14 @@ const router = express.Router();
 
 //* Utils
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { validateBody } from '../utils/validateBody.js';
+import { isValidId } from '../utils/isValidId.js';
+
+//* Validation
+import {
+  createContactSchema,
+  updateContactSchema,
+} from '../validation/contact.js';
 
 //* Controllers
 import {
@@ -16,15 +24,24 @@ import {
 
 // GET
 router.get('/', ctrlWrapper(getContactsController));
-router.get('/:contactId', ctrlWrapper(getContactByIdController));
+router.get('/:contactId', isValidId, ctrlWrapper(getContactByIdController));
 
 // POST
-router.post('/', ctrlWrapper(createContactController));
+router.post(
+  '/',
+  validateBody(createContactSchema),
+  ctrlWrapper(createContactController),
+);
 
 // PATCH
-router.patch('/:contactId', ctrlWrapper(patchContactController));
+router.patch(
+  '/:contactId',
+  isValidId,
+  validateBody(updateContactSchema),
+  ctrlWrapper(patchContactController),
+);
 
 // DELETE
-router.delete('/:contactId', ctrlWrapper(deleteContactController));
+router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));
 
 export default router;

@@ -10,9 +10,16 @@ import {
 //* Http-error
 import createHttpError from 'http-errors';
 
+//* Utils
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
+
 //* GET
 export const getContactsController = async (req, res, next) => {
-  const contacts = await getContacts();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query);
+
+  const contacts = await getContacts(page, perPage, sortBy, sortOrder);
 
   if (!contacts) {
     throw createHttpError(404, 'Contacts not found!');
