@@ -13,13 +13,22 @@ import createHttpError from 'http-errors';
 //* Utils
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 
 //* GET
 export const getContactsController = async (req, res, next) => {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query);
+  const { isFavourite, contactType } = parseFilterParams(req.query);
 
-  const contacts = await getContacts(page, perPage, sortBy, sortOrder);
+  const contacts = await getContacts(
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    isFavourite,
+    contactType,
+  );
 
   if (!contacts) {
     throw createHttpError(404, 'Contacts not found!');
