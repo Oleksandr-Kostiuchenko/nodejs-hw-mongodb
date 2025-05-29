@@ -6,9 +6,10 @@ import cors from 'cors';
 //* Middlewares
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import cookieParser from 'cookie-parser';
 
 //* Routers
-import contactsRouter from './routers/contactsRouter.js';
+import router from './routers/index.js';
 
 //* Utils
 import { getEnvVar } from './utils/getEnvVar.js';
@@ -21,6 +22,7 @@ export const setupServer = () => {
   // Basic middlewares
   app.use(express.json());
   app.use(cors());
+  app.use(cookieParser());
   app.use(
     pino({
       transport: {
@@ -36,7 +38,7 @@ export const setupServer = () => {
   });
 
   // Routers
-  app.use('/contacts', contactsRouter);
+  app.use(router);
 
   // Error handlers
   app.use(notFoundHandler);
