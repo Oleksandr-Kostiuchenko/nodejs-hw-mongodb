@@ -26,6 +26,10 @@ const contactSchema = new Schema(
       default: 'personal',
       enum: ['personal', 'home', 'work'],
     },
+    userId: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

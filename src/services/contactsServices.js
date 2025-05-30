@@ -1,3 +1,6 @@
+//* Constants
+import { ROLES } from '../constants/index.js';
+
 //* Mongoose
 import { ContactsCollection } from '../db/models/contact.js';
 
@@ -5,19 +8,32 @@ import { ContactsCollection } from '../db/models/contact.js';
 import { calcPaginationData } from '../utils/calcPaginationData.js';
 
 //* GET
-export const getContacts = async (
-  page = 1,
-  perPage = 5,
-  sortBy = 'name',
-  sortOrder = 'asc',
+export const getContacts = async ({
+  page,
+  perPage,
+  sortBy,
+  sortOrder,
   isFavourite,
   contactType,
-) => {
+  myContacts,
+  user,
+}) => {
   const skip = (page - 1) * perPage;
   const limit = perPage;
 
-  const contactsQuery = ContactsCollection.find();
+  let contactsQuery;
+  if (user.role === ROLES.USER) {
+    contactsQuery = ContactsCollection.find({
+      userId: user._id,
+    });
+  } else if (user.role === ROLES.ADMIN) {
+    contactsQuery = ContactsCollection.find();
+  }
 
+  // myContacts - filter option for admins
+  if (myContacts) {
+    contactsQuery.where('userId').equals(user._id);
+  }
   if (isFavourite !== undefined) {
     contactsQuery.where('isFavourite').equals(isFavourite);
   }
@@ -40,8 +56,17 @@ export const getContacts = async (
     ...paginationData,
   };
 };
-export const getContactById = async (contactId) => {
-  const contact = await ContactsCollection.findById(contactId);
+export const getContactById = async ({ contactId, user }) => {
+  let contact;
+
+  if (user.role === ROLES.USER) {
+    contact = await ContactsCollection.findOne({
+      _id: contactId,
+      userId: user._id,
+    });
+  } else if (user.role === ROLES.ADMIN) {
+    contact = await ContactsCollection.findById(contactId);
+  }
 
   return contact;
 };
@@ -54,12 +79,22 @@ export const createContact = async (payload) => {
 };
 
 //* PATCH
-export const patchContact = async (contactId, payload) => {
-  const result = await ContactsCollection.findOneAndUpdate(
-    { _id: contactId },
-    payload,
-    { new: true, includeResultMetadata: true },
-  );
+export const patchContact = async ({ contactId, body, user }) => {
+  let result;
+
+  if (user.role === ROLES.USER) {
+    result = await ContactsCollection.findOneAndUpdate(
+      { _id: contactId, userId: user._id },
+      body,
+      { new: true, includeResultMetadata: true },
+    );
+  } else if (user.role === ROLES.ADMIN) {
+    result = await ContactsCollection.findOneAndUpdate(
+      { _id: contactId },
+      body,
+      { new: true, includeResultMetadata: true },
+    );
+  }
 
   if (!result || !result.value) return null;
 
@@ -67,10 +102,19 @@ export const patchContact = async (contactId, payload) => {
 };
 
 //* DELETE
-export const deleteContact = async (contactId) => {
-  const contact = await ContactsCollection.findOneAndDelete({
-    _id: contactId,
-  });
+export const deleteContact = async ({ contactId, user }) => {
+  let contact;
+
+  if (user.role === ROLES.USER) {
+    contact = await ContactsCollection.findOneAndDelete({
+      _id: contactId,
+      userId: user._id,
+    });
+  } else if (user.role === ROLES.ADMIN) {
+    contact = await ContactsCollection.findOneAndDelete({
+      _id: contactId,
+    });
+  }
 
   return contact;
 };

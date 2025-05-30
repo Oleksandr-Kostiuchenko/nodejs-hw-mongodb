@@ -2,6 +2,9 @@
 import express from 'express';
 const router = express.Router();
 
+//* Middlewares
+import { authenticate } from '../middlewares/authMiddleware.js';
+
 //* Utils
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../utils/validateBody.js';
@@ -21,6 +24,9 @@ import {
   patchContactController,
   deleteContactController,
 } from '../controllers/contactsController.js';
+
+// AUTH
+router.use(authenticate);
 
 // GET
 router.get('/', ctrlWrapper(getContactsController));
