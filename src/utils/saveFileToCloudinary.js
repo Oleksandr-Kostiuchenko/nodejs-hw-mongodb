@@ -13,7 +13,6 @@ cloudinary.v2.config({
   api_key: getEnvVar('API_KEY'),
   api_secret: getEnvVar('API_SECRET'),
 });
-
 export const saveFileToCloudinary = async (file) => {
   let uploadedFile;
   try {
