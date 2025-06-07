@@ -14,6 +14,9 @@ import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 //* GET
 export const getContactsController = async (req, res, next) => {
@@ -59,9 +62,20 @@ export const getContactByIdController = async (req, res, next) => {
 
 //* POST
 export const createContactController = async (req, res, next) => {
+  const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else if (getEnvVar('ENABLE_CLOUDINARY') === 'false') {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
   const contact = await createContact({
     ...req.body,
     userId: req.user._id,
+    avatar: photoUrl,
   });
 
   res.status(201).json({
@@ -73,10 +87,20 @@ export const createContactController = async (req, res, next) => {
 
 //* PATCH
 export const patchContactController = async (req, res, next) => {
+  const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else if (getEnvVar('ENABLE_CLOUDINARY') === 'false') {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
   const { contactId } = req.params;
   const result = await patchContact({
     contactId,
-    body: req.body,
+    body: { ...req.body, avatar: photoUrl },
     user: req.user,
   });
 

@@ -142,3 +142,9 @@ dist
 .vscode
 .DS_Store
 .idea
+
+uploads/*
+!uploads/.gitkeep
+
+temp/*
+!temp/.gitkeep

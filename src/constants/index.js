@@ -27,3 +27,6 @@ export const PATH_RESET_PWD_TEMPLATE = path.join(
   'templates',
   'requestResetTemplate.html',
 );
+
+export const TEMP_UPLOAD_DIR = path.join(process.cwd(), 'temp');
+export const UPLOAD_DIR = path.join(process.cwd(), 'uploads');

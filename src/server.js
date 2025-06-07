@@ -13,6 +13,7 @@ import router from './routers/index.js';
 
 //* Utils
 import { getEnvVar } from './utils/getEnvVar.js';
+import { UPLOAD_DIR } from './constants/index.js';
 
 export const setupServer = () => {
   // PORT & Server
@@ -38,6 +39,7 @@ export const setupServer = () => {
   });
 
   // Routers
+  app.use('/uploads', express.static(UPLOAD_DIR));
   app.use(router);
 
   // Error handlers

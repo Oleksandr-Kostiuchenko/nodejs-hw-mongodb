@@ -25,6 +25,9 @@ import {
   deleteContactController,
 } from '../controllers/contactsController.js';
 
+//* Middlewares
+import { upload } from '../middlewares/multer.js';
+
 // AUTH
 router.use(authenticate);
 
@@ -35,6 +38,7 @@ router.get('/:contactId', isValidId, ctrlWrapper(getContactByIdController));
 // POST
 router.post(
   '/',
+  upload.single('avatar'),
   validateBody(createContactSchema),
   ctrlWrapper(createContactController),
 );
@@ -42,6 +46,7 @@ router.post(
 // PATCH
 router.patch(
   '/:contactId',
+  upload.single('avatar'),
   isValidId,
   validateBody(updateContactSchema),
   ctrlWrapper(patchContactController),
