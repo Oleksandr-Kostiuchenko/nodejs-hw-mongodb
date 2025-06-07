@@ -44,14 +44,14 @@ router.post('/logout', ctrlWrapper(logoutUserController));
 
 //* REQUEST-RESET-PASSWORD
 router.post(
-  '/request-reset-password',
+  '/send-reset-email',
   validateBody(requestResetPasswordSchema),
   ctrlWrapper(requestResetPasswordController),
 );
 
 //* RESET-PASSWORD
 router.post(
-  '/reset-password',
+  '/reset-pwd',
   validateBody(resetPasswordSchema),
   ctrlWrapper(resetPasswordController),
 );

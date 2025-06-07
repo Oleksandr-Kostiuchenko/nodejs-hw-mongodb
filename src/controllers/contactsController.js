@@ -75,7 +75,7 @@ export const createContactController = async (req, res, next) => {
   const contact = await createContact({
     ...req.body,
     userId: req.user._id,
-    avatar: photoUrl,
+    photo: photoUrl,
   });
 
   res.status(201).json({
@@ -100,7 +100,7 @@ export const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const result = await patchContact({
     contactId,
-    body: { ...req.body, avatar: photoUrl },
+    body: { ...req.body, photo: photoUrl },
     user: req.user,
   });
 
