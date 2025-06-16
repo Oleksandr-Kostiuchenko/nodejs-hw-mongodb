@@ -46,7 +46,7 @@ requestBody:
 responses:
   '200':
     description: Creates contact
-    conntent:
+    content:
       application/json:
         schema:
           type: object

@@ -1,0 +1,48 @@
+tags:
+  - Auth
+summary: Logout user
+operationId: authLogout
+description: Use refreshToken to logout user
+security:
+  - bearerAuth: []
+parameters:
+  - in: cookie
+    name: refreshToken
+    required: true
+    schema:
+      type: string
+      example: 'QAixX2FiCk+4CxiCd/PK266rpR55ABoUd+wRYN'
+  - in: cookie
+    name: sessionId
+    required: true
+    schema:
+      type: string
+      example: 'A%22685084d96a533d98d9623f0d'
+responses:
+  '204':
+    description: Logout user
+  '401':
+    description: Unauthorized error
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: UnauthorizedError
+            data:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  example: UnauthorizedError
