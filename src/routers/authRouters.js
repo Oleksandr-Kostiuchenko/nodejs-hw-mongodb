@@ -10,6 +10,7 @@ import {
   loginUserSchema,
   requestResetPasswordSchema,
   resetPasswordSchema,
+  confirmGoogleAuthSchema,
 } from '../validation/auth.js';
 
 //* Controllers
@@ -20,6 +21,8 @@ import {
   logoutUserController,
   requestResetPasswordController,
   resetPasswordController,
+  getOAuthUrlController,
+  confirmGoogleAuthController,
 } from '../controllers/authControllers.js';
 
 //* REGISTER
@@ -34,6 +37,16 @@ router.post(
   '/login',
   validateBody(loginUserSchema),
   ctrlWrapper(loginUserController),
+);
+
+//* GET GOOGLE OAUTH URL
+router.post('/get-oauth-url', ctrlWrapper(getOAuthUrlController));
+
+//* CONFIRM GOOGLE AUTH
+router.post(
+  '/confirm-oauth',
+  validateBody(confirmGoogleAuthSchema),
+  ctrlWrapper(confirmGoogleAuthController),
 );
 
 //* REFRESH

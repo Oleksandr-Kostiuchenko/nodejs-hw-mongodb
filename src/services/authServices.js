@@ -16,6 +16,10 @@ import {
 import { sendMail } from '../utils/sendMail.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { SMTP } from '../constants/index.js';
+import {
+  getUserFullNameByTicketPayload,
+  validateCode,
+} from '../utils/googleOAuth.js';
 
 //* JWT & Handlebars
 import jwt from 'jsonwebtoken';
@@ -191,4 +195,29 @@ export const resetPassword = async ({ token, password }) => {
     { _id: entries.sub },
     { password: encryptedPassword },
   );
+};
+
+//* CONFIRM GOOGLE AUTH
+export const confirmGoogleAuth = async (code) => {
+  const userCode = await validateCode(code);
+  const payload = await userCode.getPayload();
+  const userFullName = getUserFullNameByTicketPayload(payload);
+
+  let user = await UserCollection.findOne({
+    email: payload.email,
+  });
+  if (!user) {
+    const hashedUserPassword = await bcrypt.hash(randomBytes(10), 10);
+    user = await UserCollection.create({
+      name: userFullName,
+      email: payload.email,
+      password: hashedUserPassword,
+    });
+  }
+
+  const newSession = createSession();
+  return await SessionCollection.create({
+    userId: user._id,
+    ...newSession,
+  });
 };
