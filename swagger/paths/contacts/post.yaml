@@ -11,17 +11,12 @@ requestBody:
       schema:
         type: object
         required:
-          - _id
           - name
           - phoneNumber
           - isFavourite
           - contactType
           - userId
         properties:
-          _id:
-            description: Contact id
-            type: string
-            example: 681c8cfafbdf51c6d048fedd
           name:
             description: Contact name
             type: string
@@ -39,6 +34,7 @@ requestBody:
           photo:
             description: Contact photo
             type: string
+            format: binary
             example: https://res.cloudinary.com/uqwgdu/image/upload/image.png
           email:
             description: Contact email
